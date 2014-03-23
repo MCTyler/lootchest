@@ -22,19 +22,22 @@ as_user() {
 }
 
 lc_start() {
-if  pgrep -u $USERNAME -f $SERVICE > /dev/null ; then
-  echo "$SERVICE is already running!"
-else
-  echo "Starting $SERVICE..."
-  cd $MCPATH
-  as_user "cd $MCPATH && screen -h $HISTORY -dmS lootchest $INVOCATION"
-  sleep 7
-if pgrep -u $USERNAME -f $SERVICE > /dev/null ; then
-  echo "$SERVICE is now running."
-else
-  echo "Error! Could not start $SERVICE!"
-fi
-fi
+	if  pgrep -u $USERNAME -f $SERVICE > /dev/null
+	then
+		echo "$SERVICE is already running!"
+	else
+		echo "Starting $SERVICE..."
+		cd $MCPATH
+		as_user "screen -p 0 -S lootchest -X eval 'stuff \"stop;exit;\"'"
+		as_user "cd $MCPATH && screen -h $HISTORY -dmS lootchest $INVOCATION"
+		sleep 7
+		if pgrep -u $USERNAME -f $SERVICE > /dev/null
+		then
+			echo "$SERVICE is now running."
+		else
+			echo "Error! Could not start $SERVICE!"
+		fi
+	fi
 }
 
 lc_start
